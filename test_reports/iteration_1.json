@@ -1,0 +1,47 @@
+{
+  "summary": "First-run end-to-end test of HireSignal AI. All 14 backend pytest cases passed (auth register/login/logout/me/refresh, reports CRUD, protected routes, and full GPT-5.2 analyze flow including persistence + delete). Frontend flows verified via Playwright: landing renders, login -> dashboard works, resume form present, reports page loads (empty state), profile shows correct user info, logout clears session, and protected routes correctly redirect unauthenticated users to /login.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/reports/{id}", "issue": "GET/DELETE on missing report can return 500 because the route's outer try/except swallows HTTPException(404) and rethrows 500. Should re-raise HTTPException untouched."},
+      {"endpoint": "CORS middleware", "issue": "allow_credentials=True combined with allow_origins='*' (from CORS_ORIGINS env) is invalid per CORS spec; browsers will reject credentialed requests from real origins. Set explicit origin(s)."},
+      {"endpoint": "/api/auth/forgot-password", "issue": "Reset link is hardcoded to http://localhost:3000 instead of FRONTEND_URL env; non-functional in deployed env."},
+      {"endpoint": "cookies", "issue": "set_cookie uses secure=False; for production HTTPS deployment cookies should be secure=True."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "All pages", "issues": ["Document <title> is 'Emergent | Fullstack App' instead of 'HireSignal AI' - update public/index.html"]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_hiresignal.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Re-raise HTTPException inside /api/reports/{id} GET and DELETE handlers (currently 404 becomes 500).",
+    "Configure CORS_ORIGINS to explicit origin(s) since allow_credentials=True; '*' is invalid for credentialed CORS.",
+    "Use FRONTEND_URL env var for password reset link instead of hardcoded localhost.",
+    "Set cookies secure=True for production HTTPS.",
+    "Update <title> in /app/frontend/public/index.html to 'HireSignal AI'."
+  ],
+  "critical_code_review_comments": [
+    "server.py is ~640 lines and contains auth, analyze, reports - consider splitting into routers/auth.py, routers/analyze.py for maintainability.",
+    "The large GPT-5.2 system prompt is inlined in the endpoint; extract to a constants/prompts module.",
+    "Brute-force lockout is keyed by client IP from request.client.host - behind a proxy/ingress this may collapse all users to one IP; consider X-Forwarded-For handling.",
+    "ObjectId conversion in get_report relies on bare ObjectId(report_id) - invalid IDs raise bson.errors.InvalidId producing 500; validate first.",
+    "Reports list endpoint returns documents with '_id' key directly (string-converted) which is fine, but other endpoints return mixed shapes - standardize on 'id'."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_hiresignal.py"
+  ],
+  "success_rate": {"backend": "100% (14/14 pytest)", "frontend": "100% of critical flows verified"},
+  "test_credentials": "admin@hiresignal.com/admin123 and test@hiresignal.com/test123 (seeded on backend startup, verified working).",
+  "seed_data_creation": "Backend startup auto-seeds admin and test user; no additional seed data created. Test created a TEST_ registered user via /api/auth/register and an analyze report which was deleted by the test itself.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest suite at /app/backend/tests/test_hiresignal.py covers auth + reports + full GPT-5.2 analyze e2e (~32s runtime). All passed first run. Outstanding items are non-blocking quality issues (CORS spec compliance, 404-as-500 wrapping, hardcoded reset URL, cookie secure flag, browser tab title). No retest required unless these are fixed.",
+  "rca of the issue": "No critical bugs found. The 404->500 conversion in /api/reports/{id} is caused by the outer `try/except Exception` re-raising as 500 - it must `except HTTPException: raise` first. CORS '*' + credentials=True is invalid per Fetch spec; needs explicit origin list."
+}
