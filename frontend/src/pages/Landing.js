@@ -40,13 +40,6 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white">
       <section className="relative overflow-hidden" data-testid="hero-section">
-        <div className="absolute inset-0 opacity-5">
-          <img
-            src="https://static.prod-images.emergentagent.com/jobs/12530140-bc5e-420c-b8d6-bdbae8c52f13/images/8ecb3f017d87dae809900090a5a45f7655c9e299cafa9074786cde7fbf2c4181.png"
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="text-center max-w-4xl mx-auto">
