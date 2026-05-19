@@ -364,7 +364,7 @@ async def reset_password(data: ResetPasswordRequest):
 @api_router.post("/analyze", response_model=ResumeAnalysisResponse)
 async def analyze_resume(request_data: ResumeAnalysisRequest, current_user: dict = Depends(get_current_user)):
     try:
-        api_key = os.environ.get("EMERGENT_LLM_KEY")
+        api_key = os.environ.get("OPENAI_API_KEY") or os.environ.get("EMERGENT_LLM_KEY")
         if not api_key:
             raise HTTPException(status_code=500, detail="API key not configured")
         
