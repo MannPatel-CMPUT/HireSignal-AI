@@ -23,7 +23,21 @@ export const AuthProvider = ({ children }) => {
       );
       setUser(data);
     } catch (error) {
-      setUser(false);
+      // Try to refresh the token before giving up
+      try {
+        await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        const { data } = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/auth/me`,
+          { withCredentials: true }
+        );
+        setUser(data);
+      } catch {
+        setUser(false);
+      }
     } finally {
       setLoading(false);
     }
