@@ -642,38 +642,6 @@ async def startup_event():
         })
         logger.info(f"Test user created: {test_user_email}")
     
-    credentials_content = f"""# HireSignal AI Test Credentials
-
-## Admin Account
-- Email: {admin_email}
-- Password: {admin_password}
-- Role: admin
-
-## Test User Account
-- Email: {test_user_email}
-- Password: {test_user_password}
-- Role: user
-
-## Auth Endpoints
-- POST /api/auth/register
-- POST /api/auth/login
-- POST /api/auth/logout
-- GET /api/auth/me
-- POST /api/auth/refresh
-- POST /api/auth/forgot-password
-- POST /api/auth/reset-password
-
-## Analysis Endpoints
-- POST /api/analyze (authenticated)
-- GET /api/reports (authenticated)
-- GET /api/reports/{{report_id}} (authenticated)
-- DELETE /api/reports/{{report_id}} (authenticated)
-"""
-    
-    os.makedirs("/app/memory", exist_ok=True)
-    with open("/app/memory/test_credentials.md", "w") as f:
-        f.write(credentials_content)
-    
     logger.info("Startup complete")
 
 @app.on_event("shutdown")
