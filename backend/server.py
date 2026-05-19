@@ -263,8 +263,8 @@ async def login(user_data: UserLogin, request: Request, response: Response):
 
 @api_router.post("/auth/logout")
 async def logout(response: Response, current_user: dict = Depends(get_current_user)):
-    response.delete_cookie(key="access_token", path="/")
-    response.delete_cookie(key="refresh_token", path="/")
+    response.delete_cookie(key="access_token", path="/", secure=True, samesite="none")
+    response.delete_cookie(key="refresh_token", path="/", secure=True, samesite="none")
     return {"message": "Logged out successfully"}
 
 @api_router.get("/auth/me", response_model=UserResponse)
