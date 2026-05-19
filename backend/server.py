@@ -538,6 +538,39 @@ async def delete_report(report_id: str, current_user: dict = Depends(get_current
     await db.reports.delete_one({"_id": ObjectId(report_id)})
     return {"message": "Report deleted successfully"}
 
+# Resume Draft Routes
+@api_router.post("/resume-drafts")
+async def save_resume_draft(draft: Dict[str, Any], current_user: dict = Depends(get_current_user)):
+    draft_doc = {
+        "user_id": ObjectId(current_user["_id"]),
+        "content": draft.get("content", {}),
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    # Check if user already has a draft, update instead of creating new
+    existing = await db.resume_drafts.find_one({"user_id": ObjectId(current_user["_id"])})
+    if existing:
+        await db.resume_drafts.update_one(
+            {"_id": existing["_id"]},
+            {"$set": {"content": draft.get("content", {}), "updated_at": datetime.now(timezone.utc)}}
+        )
+        return {"message": "Draft updated", "id": str(existing["_id"])}
+    else:
+        result = await db.resume_drafts.insert_one(draft_doc)
+        return {"message": "Draft saved", "id": str(result.inserted_id)}
+
+@api_router.get("/resume-drafts")
+async def get_resume_draft(current_user: dict = Depends(get_current_user)):
+    draft = await db.resume_drafts.find_one({"user_id": ObjectId(current_user["_id"])})
+    if not draft:
+        return {"content": None}
+    
+    draft["_id"] = str(draft["_id"])
+    draft["user_id"] = str(draft["user_id"])
+    return draft
+
+
 # Include the router in the main app
 app.include_router(api_router)
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
-import { LogOut, FileText, Home, User } from 'lucide-react';
+import { LogOut, FileText, Home, User, FileEdit } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -30,6 +30,12 @@ const Navbar = () => {
                   <Button variant="ghost" size="sm" className="gap-2">
                     <Home className="h-4 w-4" />
                     Dashboard
+                  </Button>
+                </Link>
+                <Link to="/builder" data-testid="nav-builder-link">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <FileEdit className="h-4 w-4" />
+                    Builder
                   </Button>
                 </Link>
                 <Link to="/reports" data-testid="nav-reports-link">

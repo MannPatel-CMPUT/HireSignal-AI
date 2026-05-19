@@ -25,8 +25,8 @@ const Landing = () => {
     },
     {
       icon: <CheckCircle className="h-6 w-6" />,
-      title: 'Smart Bullet Rewrites',
-      description: 'Transform weak bullet points into achievement-driven statements that stand out'
+      title: 'Resume Builder',
+      description: 'Create ATS-optimized resumes from scratch with guided tips and live preview'
     }
   ];
 

@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Results from './pages/Results';
 import Reports from './pages/Reports';
 import Profile from './pages/Profile';
+import ResumeBuilder from './pages/ResumeBuilder';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -39,6 +40,14 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/builder"
+          element={
+            <ProtectedRoute>
+              <ResumeBuilder />
             </ProtectedRoute>
           }
         />

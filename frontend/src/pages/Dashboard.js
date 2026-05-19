@@ -8,6 +8,7 @@ import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { formatApiErrorDetail } from '../utils/helpers';
 import { Sparkles, Loader2 } from 'lucide-react';
+import AnalysisProgress from '../components/AnalysisProgress';
 
 const Dashboard = () => {
   const [resumeText, setResumeText] = useState('');
@@ -17,6 +18,7 @@ const Dashboard = () => {
   const [experienceLevel, setExperienceLevel] = useState('Mid-Level');
   const [tonePreference, setTonePreference] = useState('Professional');
   const [loading, setLoading] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState(0);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -24,6 +26,15 @@ const Dashboard = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setAnalysisStep(1);
+
+    // Simulate progress steps
+    const progressInterval = setInterval(() => {
+      setAnalysisStep(prev => {
+        if (prev < 7) return prev + 1;
+        return prev;
+      });
+    }, 2000);
 
     try {
       const { data } = await axios.post(
@@ -39,11 +50,16 @@ const Dashboard = () => {
         { withCredentials: true }
       );
 
-      navigate(`/results/${data.id}`);
+      clearInterval(progressInterval);
+      setAnalysisStep(8);
+      setTimeout(() => {
+        navigate(`/results/${data.id}`);
+      }, 1000);
     } catch (err) {
+      clearInterval(progressInterval);
       setError(formatApiErrorDetail(err.response?.data?.detail) || err.message);
-    } finally {
       setLoading(false);
+      setAnalysisStep(0);
     }
   };
 
@@ -69,7 +85,10 @@ const Dashboard = () => {
           </div>
         )}
 
-        <form onSubmit={handleAnalyze} className="space-y-6" data-testid="analysis-form">
+        {loading && analysisStep > 0 ? (
+          <AnalysisProgress currentStep={analysisStep} />
+        ) : (
+          <form onSubmit={handleAnalyze} className="space-y-6" data-testid="analysis-form">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white border border-zinc-200 rounded-xl p-6">
               <Label htmlFor="resume" className="text-base font-semibold mb-2 block">
@@ -188,6 +207,7 @@ const Dashboard = () => {
             </Button>
           </div>
         </form>
+        )}
       </div>
     </div>
   );
