@@ -17,7 +17,7 @@ import bcrypt
 import jwt
 from bson import ObjectId
 import secrets
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from openai import AsyncOpenAI
 import json
 
 # MongoDB connection
@@ -364,7 +364,6 @@ async def analyze_resume(request_data: ResumeAnalysisRequest, current_user: dict
         if not api_key:
             raise HTTPException(status_code=500, detail="API key not configured")
         
-        session_id = f"resume_analysis_{uuid.uuid4()}"
         
         system_message = f"""You are an expert resume analyzer acting as:
 1. A senior recruiter at {request_data.company_name or 'a top company'}
@@ -440,14 +439,15 @@ JOB DESCRIPTION:
 TARGET ROLE: {request_data.role_title or 'Not specified'}
 EXPERIENCE LEVEL: {request_data.experience_level}"""
         
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=session_id,
-            system_message=system_message
-        ).with_model("openai", "gpt-5.2")
-        
-        user_message = UserMessage(text=user_message_text)
-        response_text = await chat.send_message(user_message)
+        openai_client = AsyncOpenAI(api_key=api_key)
+        completion = await openai_client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": user_message_text}
+            ]
+        )
+        response_text = completion.choices[0].message.content
         
         try:
             if response_text.strip().startswith("```json"):
