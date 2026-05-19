@@ -325,7 +325,8 @@ async def forgot_password(data: ForgotPasswordRequest):
         "used": False
     })
     
-    reset_link = f"http://localhost:3000/reset-password?token={token}"
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+    reset_link = f"{frontend_url}/reset-password?token={token}"
     logging.info(f"Password reset link: {reset_link}")
     
     return {"message": "If the email exists, a reset link has been sent"}
@@ -507,43 +508,49 @@ async def get_reports(current_user: dict = Depends(get_current_user)):
 async def get_report(report_id: str, current_user: dict = Depends(get_current_user)):
     try:
         report = await db.reports.find_one({"_id": ObjectId(report_id)})
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-        
-        if str(report["user_id"]) != current_user["_id"]:
-            raise HTTPException(status_code=403, detail="Not authorized")
-        
-        report["_id"] = str(report["_id"])
-        report["user_id"] = str(report["user_id"])
-        
-        return report
     except Exception as e:
-        logging.error(f"Error fetching report: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to fetch report")
+        raise HTTPException(status_code=400, detail="Invalid report ID")
+    
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    
+    if str(report["user_id"]) != current_user["_id"]:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    report["_id"] = str(report["_id"])
+    report["user_id"] = str(report["user_id"])
+    
+    return report
 
 @api_router.delete("/reports/{report_id}")
 async def delete_report(report_id: str, current_user: dict = Depends(get_current_user)):
     try:
         report = await db.reports.find_one({"_id": ObjectId(report_id)})
-        if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
-        
-        if str(report["user_id"]) != current_user["_id"]:
-            raise HTTPException(status_code=403, detail="Not authorized")
-        
-        await db.reports.delete_one({"_id": ObjectId(report_id)})
-        return {"message": "Report deleted successfully"}
     except Exception as e:
-        logging.error(f"Error deleting report: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to delete report")
+        raise HTTPException(status_code=400, detail="Invalid report ID")
+    
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+    
+    if str(report["user_id"]) != current_user["_id"]:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    await db.reports.delete_one({"_id": ObjectId(report_id)})
+    return {"message": "Report deleted successfully"}
 
 # Include the router in the main app
 app.include_router(api_router)
 
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+if cors_origins == '*':
+    cors_origins = [os.environ.get('FRONTEND_URL', 'http://localhost:3000')]
+else:
+    cors_origins = cors_origins.split(',')
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
