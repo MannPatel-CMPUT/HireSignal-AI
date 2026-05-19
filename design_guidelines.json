@@ -1,0 +1,100 @@
+{
+  "theme": "Light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "vibe": "Notion and Linear inspired. Highly analytical, objective, clean, and premium SaaS. Optimizes for clarity and trust over decoration.",
+  "colors": {
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "text_primary": "#09090B",
+    "text_secondary": "#71717A",
+    "border": "#E4E4E7",
+    "primary_accent": "#000000",
+    "primary_foreground": "#FFFFFF",
+    "status": {
+      "success_emerald": "#10B981",
+      "warning_amber": "#F59E0B",
+      "error_red": "#EF4444",
+      "ai_insight_indigo": "#6366F1"
+    }
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Cabinet Grotesk, sans-serif",
+      "weights": ["500", "700", "900"],
+      "styling": "tracking-tight leading-tight",
+      "h1_max": "text-5xl md:text-6xl"
+    },
+    "body": {
+      "font_family": "Manrope, sans-serif",
+      "weights": ["400", "500", "600"],
+      "styling": "leading-relaxed"
+    },
+    "labels": {
+      "styling": "uppercase tracking-[0.2em] text-xs font-semibold"
+    },
+    "forbidden_fonts": ["Inter for headings", "Space Grotesk"]
+  },
+  "spacing_and_layout": {
+    "general": "Generous spacing. Use p-8 to p-24 for marketing sections. Tight spacing (p-4 to p-6) for dashboard components.",
+    "marketing_grid": "Tetris Grid (asymmetrical). Avoid default Bootstrap columns. Use overlapping layers and generous negative space.",
+    "dashboard_grid": "Control Room Grid. Base grid-cols-1 md:grid-cols-4. Strict hierarchy, dense data correlation.",
+    "surface_treatment": {
+      "cards": "Flat background (bg-white), 1px border (border-border), rounded-xl, subtle shadow-sm. No heavy gradients.",
+      "header": "Glassmorphism: backdrop-blur-xl bg-white/80, 1px bottom border border-border/40."
+    }
+  },
+  "components": {
+    "strategy": "Shadcn/UI heavily customized for a flat, high-contrast look.",
+    "buttons": "Square or slightly rounded (rounded-md). Dark mode style CTA (bg-black text-white hover:bg-zinc-800).",
+    "inputs": "Shadcn Form/Input components. Light gray background (bg-zinc-50) on focus:bg-white.",
+    "charts": "Shadcn Charts (Recharts). Use monochrome for structure, status colors (Emerald/Red) specifically for ATS match/fail metrics.",
+    "forbidden_patterns": ["HTML native inputs", "Generic Vercel template look", "Centered everything layout"]
+  },
+  "motion_and_interaction": {
+    "animations": "Framer Motion. Minimalist micro-interactions.",
+    "hover_states": "Crisp transformations. -translate-y-[2px], deeper shadow. All interactive elements must explicitly change text/bg color.",
+    "metrics": "Animated count-up for ATS score rings. Progress bars must fill dynamically."
+  },
+  "accessibility": {
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case (e.g., data-testid='analyze-resume-btn').",
+    "contrast": "Ensure APCA contrast compliance. Hover states must be higher contrast. Do not rely solely on color for status (use icons alongside Red/Green/Yellow)."
+  },
+  "media_and_assets": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "Clean, line-based, consistent stroke width."
+    },
+    "images": {
+      "hero_abstract": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/12530140-bc5e-420c-b8d6-bdbae8c52f13/images/8ecb3f017d87dae809900090a5a45f7655c9e299cafa9074786cde7fbf2c4181.png",
+        "usage": "Marketing landing page hero background or side-visual. Abstract data processing."
+      },
+      "desk_focus": {
+        "url": "https://static.prod-images.emergentagent.com/jobs/12530140-bc5e-420c-b8d6-bdbae8c52f13/images/b6787640b07bd38b5aaf3cc15343da52b3cbde4b198ba046e00c33af983bcba3.png",
+        "usage": "Section background for 'How it Works' or 'Recruiter Analysis'."
+      },
+      "recruiter_testimonials": [
+        {
+          "url": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjByZWNydWl0ZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzkyMDE2MDR8MA&ixlib=rb-4.1.0&q=85",
+          "usage": "Testimonial profile picture 1"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjByZWNydWl0ZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzkyMDE2MDR8MA&ixlib=rb-4.1.0&q=85",
+          "usage": "Testimonial profile picture 2"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjByZWNydWl0ZXIlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzkyMDE2MDR8MA&ixlib=rb-4.1.0&q=85",
+          "usage": "Testimonial profile picture 3"
+        }
+      ]
+    }
+  },
+  "instructions_to_main_agent": [
+    "Install Cabinet Grotesk (from Fontshare or local assets) and Manrope (Google Fonts). Apply them strictly.",
+    "Do not use placeholder text or mock images. Use the provided image URLs.",
+    "Implement the landing page with standard HTML/Tailwind to allow overlap, and use Shadcn extensively for the Resume Analysis Dashboard.",
+    "Build the dashboard modularly (Bento Grid style) for ATS Score, Recruiter Readiness, AI Tone Detection, and Keyword Match.",
+    "Adhere to the exact color tokens (Emerald for Match, Red for Gap/Fail). Do not introduce unapproved gradients.",
+    "Add 'data-testid' to every actionable button, link, and major output container."
+  ]
+}
